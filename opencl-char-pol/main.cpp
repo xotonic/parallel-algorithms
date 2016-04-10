@@ -226,16 +226,19 @@ float* gpu_char_pol(float* mat, int n)
 float compute_omp(float* c, float* b, float* ident, float* c_plus_ident, int k, int n)
 {
 	//for (int i = 0; i < n*n; i++) c[i] = b[i];
-
-#pragma omp parallel for
-	for (int i = 0; i < n*n; i++) c[i] = b[i];
-	
-	float p = - trace(c, n) / (k + 1);
-	fill_identity(ident, n, p);
-
-#pragma omp parallel for
-	for (int i = 0; i < n*n; i++)  c_plus_ident[i] = c[i] + ident[i];
-	
+	float p;
+#pragma omp parallel
+	{
+#pragma omp  for
+		for (int i = 0; i < n*n; i++) c[i] = b[i];
+#pragma omp single
+		{		
+			p = -trace(c, n) / (k + 1);
+			fill_identity(ident, n, p);
+		}
+#pragma omp  for
+		for (int i = 0; i < n*n; i++)  c_plus_ident[i] = c[i] + ident[i];
+	}
 	return p;
 }
 
