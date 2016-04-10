@@ -5,7 +5,7 @@
 #include <chrono>
 #include <iostream>
 #include <cstring>
-#include <string>
+#include <omp.h>
 #include <fstream>
 using namespace std::chrono;
 #define CHECK_OPENCL_ERROR(actual, msg)                                        \
@@ -192,6 +192,7 @@ void gpu_mult(float* a, float *b, float *c, int n)
 	CHECK_OPENCL_ERROR(status, "Error: clFinish");
 }
 
+
 float* gpu_char_pol(float* mat, int n)
 {
 	float* pol = (float*)malloc(sizeof(float) * (n + 1));
@@ -203,14 +204,61 @@ float* gpu_char_pol(float* mat, int n)
 	for (int i = 0; i < n*n; i++) b[i] = mat[i];
 	float * ident = (float*)malloc(sizeof(float) * n * n);
 
-
 	for (int k = 0; k < n; k++)
 	{
 		for (int i = 0; i < n*n; i++) c[i] = b[i];
-		float p = -trace(c, n) / (k + 1);
-		pol[n - k - 1] = p;
+		float sum = trace(c, n);
+		printf("GPU : %f\n", sum);
+		float p = - sum/ (k + 1);
 		fill_identity(ident, n, p);
-		for (int i = 0; i < n*n; i++) c_plus_ident[i] = c[i] + ident[i];
+		for (int i = 0; i < n*n; i++)  c_plus_ident[i] = c[i] + ident[i];
+		pol[n - k - 1] = p;
+		gpu_mult(mat, c_plus_ident, b, n);
+	}
+
+	free(c);
+	free(c_plus_ident);
+	free(ident);
+	free(b);
+	return pol;
+}
+
+float compute_omp(float* c, float* b, float* ident, float* c_plus_ident, int k, int n)
+{
+	//for (int i = 0; i < n*n; i++) c[i] = b[i];
+
+#pragma omp parallel for
+	for (int i = 0; i < n*n; i++) c[i] = b[i];
+	
+	float p = - trace(c, n) / (k + 1);
+	fill_identity(ident, n, p);
+
+#pragma omp parallel for
+	for (int i = 0; i < n*n; i++)  c_plus_ident[i] = c[i] + ident[i];
+	
+	return p;
+}
+
+
+float* opm_gpu_char_pol(float* mat, int n)
+{
+	float* pol = (float*)malloc(sizeof(float) * (n + 1));
+
+	for (int i = 0; i < n + 1; i++) pol[n] = 1.0f;
+	float* c = (float*)malloc(sizeof(float) * n * n);
+	float* c_plus_ident = (float*)malloc(sizeof(float) * n * n);
+	float* b = (float*)malloc(sizeof(float) * n * n);
+	for (int i = 0; i < n*n; i++) b[i] = mat[i];
+	float * ident = (float*)malloc(sizeof(float) * n * n);
+
+	for (int k = 0; k < n; k++)
+	{
+		/*for (int i = 0; i < n*n; i++) c[i] = b[i];
+		float p = -trace(c, n) / (k + 1);
+		fill_identity(ident, n, p);
+		for (int i = 0; i < n*n; i++)  c_plus_ident[i] = c[i] + ident[i];*/
+		float p = compute_omp(c, b, ident, c_plus_ident, k, n);
+		pol[n - k - 1] = p;
 		gpu_mult(mat, c_plus_ident, b, n);
 	}
 
@@ -375,14 +423,21 @@ int main() {
 	auto gpu_total = duration_cast<nanoseconds>(end - start).count()/1000000.0;
 	//gpu_total = start - time(0);
 
-	float gpu_sum = 0, cpu_sum = 0;
+	printf("Computing on GPU + OPENMP...\n");
+	start = system_clock::now();
+	float* omp_gpu_pol = opm_gpu_char_pol(mat, size);
+	end = system_clock::now();
+	auto omp_gpu_total = duration_cast<nanoseconds>(end - start).count() / 1000000.0;
+
+	float gpu_sum = 0, cpu_sum = 0, omp_gpu_sum = 0;
 	for (int i = 0; i < size + 1; i++)  { 
 		cpu_sum += pol[i]; 
 		gpu_sum += gpu_pol[i];
-		printf("%f\t %f\n", pol[i], gpu_pol[i]);
+		omp_gpu_sum += omp_gpu_pol[i];
+		printf("%f\t %f\t %f\n", pol[i], gpu_pol[i], omp_gpu_pol[i]);
 	}
-	printf("Checksum:\nCPU :\t%f\nGPU :\t%f\n", cpu_sum, gpu_sum);
-	printf("Time:\nCPU :\t%f ms\nGPU :\t%f ms\n", cpu_total, gpu_total);
+	printf("Checksum:\nCPU     :\t%f\nGPU     :\t%f\nOMP+GPU :\t%f\n", cpu_sum, gpu_sum, omp_gpu_sum);
+	printf("Time:\nCPU     :\t%f ms\nGPU     :\t%f ms\nOMP+GPU :\t%f\n", cpu_total, gpu_total, omp_gpu_total);
 
 	// Clean the resources.
 	status = clReleaseKernel(kernel_mult);

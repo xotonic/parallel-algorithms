@@ -128,6 +128,7 @@ copy kernel.cl "$(OutDir)kernel.cl" /Y
       <AssemblerListingLocation>Debug</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <DisableSpecificWarnings>4005;4996</DisableSpecificWarnings>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -198,6 +199,7 @@ copy kernel.cl "$(OutDir)kernel.cl" /Y
       <DisableSpecificWarnings>4005;4996</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(SolutionDir)bin/x86_64/Release/BasicDebug.pdb</ProgramDataBaseFileName>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
