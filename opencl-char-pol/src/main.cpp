@@ -208,7 +208,7 @@ float* gpu_char_pol(float* mat, int n)
 	{
 		for (int i = 0; i < n*n; i++) c[i] = b[i];
 		float sum = trace(c, n);
-		//printf("GPU : %f\n", sum);
+		printf("GPU : %f\n", sum);
 		float p = - sum/ (k + 1);
 		fill_identity(ident, n, p);
 		for (int i = 0; i < n*n; i++)  c_plus_ident[i] = c[i] + ident[i];
@@ -297,7 +297,7 @@ int main() {
 	printf("Reading matrix from file...\n");
 	int size = 0;
 	float* mat;
-	size = create_matrix_from_file(mat, "matrix_10_200x200f.txt");
+	size = create_matrix_from_file(mat, "matrix_10_100x100f.txt");
 
 	int blocks = size * size;
 
