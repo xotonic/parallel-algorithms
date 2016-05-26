@@ -1,9 +1,0 @@
-﻿  main.cpp
-main.cpp(64): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  Создание кода
-  6 of 27 functions (22.2%) were compiled, the rest were copied from previous compilation.
-    5 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
-  Создание кода завершено
-  mpi-single.vcxproj -> C:\Users\xoton\OneDrive\Документы\Visual Studio 2015\Projects\mpi-kal-6\x64\Release\mpi-single.exe
-  mpi-single.vcxproj -> C:\Users\xoton\OneDrive\Документы\Visual Studio 2015\Projects\mpi-kal-6\x64\Release\mpi-single.pdb (Full PDB)
