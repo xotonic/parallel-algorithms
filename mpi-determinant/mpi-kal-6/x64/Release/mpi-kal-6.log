@@ -1,0 +1,9 @@
+﻿  main.cpp
+main.cpp(94): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Создание кода
+  1 of 16 functions ( 6.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Создание кода завершено
+  mpi-kal-6.vcxproj -> C:\Users\xoton\onedrive\документы\visual studio 2015\Projects\mpi-kal-6\x64\Release\mpi-kal-6.exe
+  mpi-kal-6.vcxproj -> C:\Users\xoton\onedrive\документы\visual studio 2015\Projects\mpi-kal-6\x64\Release\mpi-kal-6.pdb (Full PDB)
