@@ -1,9 +1,0 @@
-﻿  main.cpp
-main.cpp(164): warning C4244: =: преобразование "float" в "int", возможна потеря данных
-  Создание кода
-  2 of 213 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  Создание кода завершено
-  single-sparse-matrix.vcxproj -> C:\Users\xoton\OneDrive\Документы\Visual Studio 2015\Projects\mpi-openmp-sparse-matrix\Release\single-sparse-matrix.exe
-  single-sparse-matrix.vcxproj -> C:\Users\xoton\OneDrive\Документы\Visual Studio 2015\Projects\mpi-openmp-sparse-matrix\Release\single-sparse-matrix.pdb (Full PDB)

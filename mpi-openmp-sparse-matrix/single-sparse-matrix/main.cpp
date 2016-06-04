@@ -6,6 +6,9 @@
 #include <omp.h>
 using namespace std;
 
+const int log_level = 0;
+#define IF_LOG if (log_level > 0)
+
 float get(float *matrix, int n, int x, int y) {
 	if (x >= n || y >= n) {
 		printf("\nAhtung! get %d %d\n", x, y);
@@ -94,7 +97,7 @@ float submatrix_sum(float* mat, int x, int y, int subsize, int size)
 	auto v = hvariants[y];
 	for (int i = 0; i < subsize; i++)
 		for (int j = 0; j < subsize; j++)
-			sum += get(mat, size, h[i], v[j]);
+			sum += get(mat, size, v[j],h[i]);
 	return sum;
 }
 
@@ -105,7 +108,7 @@ void print_submatrix(float* mat, int x, int y, int subsize, int size)
 	for (int i = 0; i < subsize; i++)
 	{
 		for (int j = 0; j < subsize; j++)
-			printf("%f ", get(mat, size, h[i], v[j]));
+			printf("%f ", get(mat, size, v[j], h[i]));
 		printf("\n");
 	}
 }
@@ -135,13 +138,14 @@ int main()
 		}
 	}*/
 
-	printf("Recursive test:\n");
+	IF_LOG printf("Recursive test:\n");
 	
 	for (int i = 0; i < size - 1; i++)
 	{
 		find_variant(i - 1, size - 1, 0, subsize, vector<int>());
 	}
 
+	IF_LOG {
 	printf("Result:\n");
 	for (auto i : hvariants)
 	{
@@ -149,16 +153,16 @@ int main()
 			printf("%d ", n);
 		printf("\n");
 	}
-	
+	}
 	int max = -1;
 	int max_i = -1;
 	int max_j = -1;
-	for (int i = 0; i < size; i++)
-		for (int j = i; j < size; j++)
+	for (int i = 0; i < hvariants.size(); i++)
+		for (int j = i; j < hvariants.size(); j++)
 		{
 			float sum = submatrix_sum(mat, i, j, subsize, size);
-			printf("i = %d j = %d sum = %f\n", i, j, sum);
-			print_submatrix(mat, i, j, subsize, size);
+			IF_LOG printf("i = %d j = %d sum = %f\n", i, j, sum);
+			IF_LOG print_submatrix(mat, i, j, subsize, size);
 			if (sum > max)
 			{
 				max = sum;
@@ -167,7 +171,7 @@ int main()
 		}
 
 	printf("Max submatrix:\nsum = %d\ni = %d j = %d\n", max, max_i, max_j);
-	print_submatrix(mat, max_i, max_j, subsize, size);
+	IF_LOG print_submatrix(mat, max_i, max_j, subsize, size);
 
 	return 0;
 }
