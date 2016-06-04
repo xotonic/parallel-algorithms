@@ -14,7 +14,6 @@ float get(float *matrix, int n, int x, int y) {
 		printf("\nAhtung! get %d %d\n", x, y);
 		return 0.0;
 	}
-	//printf("get %d %d\n", x, y);
 	return (float)matrix[y * n + x];
 }
 
@@ -36,17 +35,6 @@ void print_matrix(float *matrix, int n) {
 
 	printf("\n");
 }
-
-// sum of the diagonal elements
-float trace(float *m, int n) {
-	float sum = 0.0;
-
-	for (int i = 0; i < n; i++) {
-		sum += get(m, n, i, i);
-	}
-	return sum;
-}
-
 
 int create_matrix_from_file(float* &mat_ptr, const char* filename)
 {
@@ -125,18 +113,9 @@ int main()
 	printf("Reading matrix from file...\n");
 	size = create_matrix_from_file(mat, filename /*"matrix_10_200x200f.txt"*/);
 
-	//float* hindexes = (float*)malloc(sizeof(float) * subsize);
-	//float* vindexes = (float*)malloc(sizeof(float) * subsize);
+	auto start = omp_get_wtime();
 
-
-
-	/*for (int i = 0; i < size; i++)
-	{
-		for (int j = i + 1; j < size; j++)
-		{
-			printf("%d - %d\n", i, j);
-		}
-	}*/
+	printf("Finding submatrixes...\n");
 
 	IF_LOG printf("Recursive test:\n");
 	
@@ -154,7 +133,9 @@ int main()
 		printf("\n");
 	}
 	}
-	int max = -1;
+	printf("Finding max sum...\n");
+
+	float max = 0.0f;
 	int max_i = -1;
 	int max_j = -1;
 	for (int i = 0; i < hvariants.size(); i++)
@@ -169,8 +150,10 @@ int main()
 				max_i = i; max_j = j;
 			}
 		}
-
-	printf("Max submatrix:\nsum = %d\ni = %d j = %d\n", max, max_i, max_j);
+	auto end = omp_get_wtime();
+	printf("Time : %f\n", end - start);
+	printf("Max submatrix: sum = %f\n", max);
+	//printf("Max submatrix:\nsum = %f\ni = %d j = %d\n", max, max_i, max_j);
 	IF_LOG print_submatrix(mat, max_i, max_j, subsize, size);
 
 	return 0;
