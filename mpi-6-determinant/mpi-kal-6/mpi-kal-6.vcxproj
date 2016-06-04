@@ -22,7 +22,7 @@
     <ProjectGuid>{C574D330-48CD-4E16-86F4-627FCFE19304}</ProjectGuid>
     <RootNamespace>mpikal6</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>mpi-parallel</ProjectName>
+    <ProjectName>mpi-6-determinant</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
