@@ -7,3 +7,8 @@
 /opencl-char-pol/temp
 /opencl-char-pol/bin
 /opencl-char-pol/opencl-par-pol.VC.db
+.vc
+*.iobj
+*.ipdb
+*.pdb
+*.VC.db

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <mpi.h>
-#include <omp.h>
+//#include <mpe.h>
 using namespace std;
 
 const int log_level = 0;
@@ -100,6 +100,7 @@ void print_submatrix(float* mat, int x, int y, int subsize, int size)
 		printf("\n");
 	}
 }
+
 int main(int argc, char* argv[])
 {
 	setbuf(stdout, NULL);
@@ -111,16 +112,25 @@ int main(int argc, char* argv[])
 	char processor_name[MPI_MAX_PROCESSOR_NAME];
 	int _max = 0;
 
+	//auto event_a = MPE_Log_get_event_number();
+	//auto event_b = MPE_Log_get_event_number();
+	//auto event_c = MPE_Log_get_event_number();
+
+	//MPE_Describe_state(event_a, event_b, "First", "red");
+	//MPE_Describe_state(event_b, event_c, "Second", "green");
+
+
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 	MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 	MPI_Get_processor_name(processor_name, &namelen);
-	fprintf(stderr,"Process %d of %d is on %s\n", myid, numprocs, processor_name);
+	fprintf(stderr, "Process %d of %d is on %s\n", myid, numprocs, processor_name);
 	fflush(stderr);
+	//MPE_Start_log();
 	MPI_Barrier(MPI_COMM_WORLD);
 	int size = 0;
 	int subsize = 0;
 	float* mat = NULL;
-	
+
 	if (myid == 0)
 	{
 		printf("Matrix file\n>>");
@@ -132,18 +142,19 @@ int main(int argc, char* argv[])
 		size = create_matrix_from_file(mat, filename /*"matrix_10_200x200f.txt"*/);
 		IF_LOG printf("Recursive test:\n");
 
-	
+
 		/*IF_LOG{
-			printf("Result:\n");
+		printf("Result:\n");
 		for (auto i : hvariants)
 		{
-			for (auto n : i)
-				printf("%d ", n);
-			printf("\n");
+		for (auto n : i)
+		printf("%d ", n);
+		printf("\n");
 		}
 		}*/
 		startwtime = MPI_Wtime();
 	}
+	//MPE_Log_event(event_a, 0, "Start");
 
 	MPI_Bcast(&size, 1, MPI_INT, 0, MPI_COMM_WORLD);
 	MPI_Bcast(&subsize, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -160,8 +171,7 @@ int main(int argc, char* argv[])
 	int vsize = hvariants.size();
 	int max_i = 0;
 	int max_j = 0;
-	for (int i = myid; i < vsize; i+=numprocs)
-#pragma omp parallel for
+	for (int i = myid; i < vsize; i += numprocs)
 		for (int j = i; j < vsize; j++)
 		{
 			float sum = submatrix_sum(mat, i, j, subsize, size);
@@ -182,6 +192,7 @@ int main(int argc, char* argv[])
 		printf("Max submatrix: sum = %f\n", total_max);
 		IF_LOG print_submatrix(mat, max_i, max_j, subsize, size);
 	}
+	//MPE_Finish_log("logfile");
 	MPI_Finalize();
 	return 0;
 }

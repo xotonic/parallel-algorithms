@@ -1,4 +1,0 @@
-﻿  main.cpp
-c:\users\xoton\onedrive\документы\visual studio 2015\projects\parallel-algorithms\mpi-openmp-sparse-matrix\single-sparse-matrix\main.cpp(168): warning C4244: =: преобразование "float" в "int", возможна потеря данных
-  single-sparse-matrix.vcxproj -> C:\Users\xoton\OneDrive\Документы\Visual Studio 2015\Projects\parallel-algorithms\mpi-openmp-sparse-matrix\x64\Debug\single-sparse-matrix.exe
-  single-sparse-matrix.vcxproj -> C:\Users\xoton\OneDrive\Документы\Visual Studio 2015\Projects\parallel-algorithms\mpi-openmp-sparse-matrix\x64\Debug\single-sparse-matrix.pdb (Partial PDB)
